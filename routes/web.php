@@ -12,7 +12,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-})->name('/dashboard');
+})->name('dashboard');
 
 
 Route::middleware('auth')->group(function () {

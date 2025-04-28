@@ -47,10 +47,11 @@
     43 => 'Termwind\\Laravel\\TermwindServiceProvider',
     44 => 'Pest\\Laravel\\PestServiceProvider',
     45 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
-    46 => 'Spatie\\Permission\\PermissionServiceProvider',
-    47 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    48 => 'App\\Providers\\AppServiceProvider',
-    49 => 'App\\Providers\\Filament\\AdminPanelProvider',
+    46 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
+    47 => 'Spatie\\Permission\\PermissionServiceProvider',
+    48 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    49 => 'App\\Providers\\AppServiceProvider',
+    50 => 'App\\Providers\\Filament\\AdminPanelProvider',
   ),
   'eager' => 
   array (
@@ -84,10 +85,11 @@
     27 => 'Termwind\\Laravel\\TermwindServiceProvider',
     28 => 'Pest\\Laravel\\PestServiceProvider',
     29 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
-    30 => 'Spatie\\Permission\\PermissionServiceProvider',
-    31 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    32 => 'App\\Providers\\AppServiceProvider',
-    33 => 'App\\Providers\\Filament\\AdminPanelProvider',
+    30 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
+    31 => 'Spatie\\Permission\\PermissionServiceProvider',
+    32 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    33 => 'App\\Providers\\AppServiceProvider',
+    34 => 'App\\Providers\\Filament\\AdminPanelProvider',
   ),
   'deferred' => 
   array (
