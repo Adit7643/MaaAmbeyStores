@@ -11,7 +11,8 @@ use Filament\Resources\Pages\EditRecord;
 class ProductImages extends EditRecord
 {
     protected static string $resource = ProductResource::class;
-    
+    protected static ?string $title = 'Images';
+
     protected static ?string $navigationIcon = 'heroicon-c-photo';
 
     public function form(Form $form): Form
@@ -19,6 +20,7 @@ class ProductImages extends EditRecord
         return $form
             ->schema([
                 SpatieMediaLibraryFileUpload::make('images') // Make sure 'images' is the media collection name
+                    ->label(false)
                     ->image()
                     ->multiple()
                     ->openable()
