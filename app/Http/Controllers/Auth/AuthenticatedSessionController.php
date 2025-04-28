@@ -28,22 +28,31 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): \Symfony\Component\HttpFoundation\Response
     {
-        $request->authenticate();
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        $request->session()->regenerate();
-        $user = Auth::user();
-        $route = "/";
-        if($user->hasAnyRole([RolesEnum::Admin, RolesEnum::Vendor])) {
-            return Inertia::location('/admin');
-        }else if($user->hasRole(RolesEnum::User)) {
-            $route = route('/dashboard', absolute: false);
+        // Check if the user is already logged in
+        if (Auth::check()) {
+            return redirect()->intended('/');
+        } {
+            $request->authenticate();
+
+            $request->session()->regenerate();
+            $user = Auth::user();
+            $route = "/";
+            if ($user->hasAnyRole([RolesEnum::Admin, RolesEnum::Vendor])) {
+                return Inertia::location(route('filament.admin.pages.dashboard'));
+            } else if ($user->hasRole(RolesEnum::User)) {
+                $route = route('/dashboard', absolute: false);
+            }
+
+            return redirect()->intended($route);
         }
-
-        return redirect()->intended($route);
     }
-
     /**
      * Destroy an authenticated session.
      */
