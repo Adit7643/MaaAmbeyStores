@@ -52,6 +52,8 @@ class ProductVariationTypes extends EditRecord
                                     ->collection('images')
                                     ->label(__('Image'))
                                     ->image()
+                                    ->multiple()
+                                    ->panelLayout('Grid')
                                     ->preserveFilenames()
                                     ->openable()
                                     ->reorderable()
