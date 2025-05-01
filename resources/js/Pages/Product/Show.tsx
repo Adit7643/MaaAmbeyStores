@@ -14,7 +14,7 @@ function Show({product, variationOptions}:{product: Product, variationOptions : 
     const form = useForm<{
         option_ids: Record<string, number>;
         quantity : number,
-        price:number | null;
+        price: number | null;
     }>({
         option_ids: {},
         quantity: 1,
@@ -55,6 +55,7 @@ function Show({product, variationOptions}:{product: Product, variationOptions : 
 
     }, [product, selectedOptions]);
 
+   
 
     useEffect(() => {
             for (let type of product.variationTypes) {
@@ -116,7 +117,7 @@ function Show({product, variationOptions}:{product: Product, variationOptions : 
     const renderProductVariationTypes = () => {
         return product.variationTypes.map((type: VariationType, i: number) => (
             <div key={type.id}>
-                <b>{type.name}</b>
+                <b>{type.name}</b><br />
                 {type.type === 'Image' && (
                     <div className="flex gap-2 mb-4">
                         {type.options.map(option => (

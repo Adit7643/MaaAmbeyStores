@@ -2,8 +2,6 @@ import { Image } from "@/types";
 
 
 function Carousel({images}:{images:Image[]}) {
-    console.log("ye car");
-    console.log(images);
     return (
         <div>
             <div className="flex items-start gap-8">

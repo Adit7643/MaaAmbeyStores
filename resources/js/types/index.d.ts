@@ -17,6 +17,7 @@ export type Image = {
 export type VariationTypeOption = {
     id : number;
     name : string;
+    price:number;
     images : Image[];
     type : VariationType
 }
@@ -54,6 +55,24 @@ export type Product = {
     price : number;
     }>
 }
+export type cartItem ={
+    id : number;
+    product_id:number;
+    title:string;
+    slug:string;
+    price:number;
+    quantity:number;
+    image:string;
+    option_ids: Record<string, number>;
+    options: VariationType[]
+}
+
+export type GroupedCartItems = {
+    user:User;
+    items: Cartitem[];
+    totalPrice: number;
+    totalQuantity: number;
+}
 
 export type PaginationProps<T> = {
     data : Array<T>
@@ -62,8 +81,15 @@ export type PaginationProps<T> = {
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
+    csrf_token:string;
+    error:string;
+    success:string;
     auth: {
         user: User;
     };
     ziggy: Config & { location: string };
+    totalQuantity:number;
+    totalPrice:number;
+    miniCartItems
+    : cartItem[];
 };
