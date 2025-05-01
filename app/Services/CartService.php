@@ -148,14 +148,22 @@ class CartService
     protected function updateItemQuantityInDatabase(int $productId, int $quantity, array $optionIds): void
     {
         $userId = Auth::id();
-        $cartItems = CartItem::where('user_id', $productId)
-            ->where('variation_type_option_ids' . json_encode($optionIds))
-            ->first();
-        if ($cartItems) {
-            $cartItems->update([
+
+        $query = CartItem::where('user_id', $userId)
+            ->where('product_id', $productId);
+
+        foreach ($optionIds as $optionType => $selectedValue) {
+            $query->where("variation_type_option_ids->$optionType", $selectedValue);
+        }
+
+        $cartItem = $query->first();
+
+        if ($cartItem) {
+            $cartItem->update([
                 'quantity' => $quantity,
             ]);
         }
+
     }
     protected function updateItemQuantityInCookies(int $productId, int $quantity, array $optionIds): void
     {
@@ -173,7 +181,6 @@ class CartService
     {
         $userId = Auth::id();
         ksort($optionIds);
-
         $cartItems = CartItem::where('user_id', $userId)
             ->where('variation_type_option_ids' . json_encode($optionIds))
             ->first();
@@ -215,12 +222,19 @@ class CartService
     protected function removeItemFromDatabase(int $productId, array $optionIds)
     {
         $userId = Auth::id();
-        ksort($optionIds);
 
-        $cartItem = CartItem::where('user_id', $userId)
-            ->where('product_id', $productId)
-            ->where('variation_type_option_ids' . json_encode($optionIds))
-            ->delete();
+        $query = CartItem::where('user_id', $userId)
+            ->where('product_id', $productId);
+
+        foreach ($optionIds as $optionType => $selectedValue) {
+            $query->where("variation_type_option_ids->$optionType", $selectedValue);
+        }
+
+        $cartItem = $query->first();
+
+        if ($cartItem) {
+            $cartItem->delete();
+        }
 
     }
     protected function removeItemFromCookies(int $productId, array $optionIds)
@@ -237,7 +251,6 @@ class CartService
         $cartItems = CartItem::where('user_id', $userId)
             ->get()
             ->map(function ($cartItem) {
-
                 return [
                     'id' => $cartItem->id,
                     'product_id' => $cartItem->product_id,

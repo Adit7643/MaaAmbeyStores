@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderViewResource;
+use App\Mail\CheckOutCompleted;
+use App\Mail\NewOrderMail;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\OrderStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\StripeClient;
 use Stripe\Webhook;
@@ -14,10 +19,25 @@ use UnexpectedValueException;
 
 class StripeController extends Controller
 {
-    public function success()
+    public function success(Request $request)
     {
         //
-        redirect('/');
+        $user = auth()->user();
+        $session_id = $request->get('session_id');
+        $orders = Order::where('stripe_session_id', $session_id)
+            ->get();
+        if ($orders->count() == 0) {
+            abort(404);
+        }
+        foreach ($orders as $order) {
+            if ($order->user_id !== $user->id) {
+                abort(403);
+            }
+        }
+
+        return Inertia::render('Stripe/Success', [
+            'orders' => OrderViewResource::collection($orders)->collection->toArray(),
+        ]);
     }
 
     public function failure()
@@ -29,7 +49,7 @@ class StripeController extends Controller
     public function webhook(Request $request)
     {
         $stripe = new StripeClient(config('app.stripe_secret_key'));
-        $endpoint_secret = config('app.stripe_endpoint_secret');
+        $endpoint_secret = config('app.stripe_webhook_secret');
         $payload = $request->getContent();
         $sig_header = $request->header('stripe-Signature');
         $event = null;
@@ -48,10 +68,6 @@ class StripeController extends Controller
             return response('Invalid Payload', 400);
         }
 
-        Log::info('======================');
-        Log::info('======================');
-        Log::info($event->type);
-        Log::info($event);
 
         switch ($event->type) {
             case 'charge.updated':
@@ -73,12 +89,14 @@ class StripeController extends Controller
                 $platformFeePercent = config('app.platform_fee_pct');
                 foreach ($orders as $order) {
                     $vendorShare = $order->total_price / $totalAmount;
-                    $order->online_payment_commission = $vendorShare * $stripeFee;
-                    $order->website_commision = ($order->total_price - $order->online_payment_commission) / 100 * $platformFeePercent;
-                    $order->vendor_subtotal = $order->total_price - $order->online_payment_commission - $order->website_commision;
+                    $order->online_payment_commision = $vendorShare * $stripeFee;
+                    $order->website_commision = ($order->total_price - $order->online_payment_commision) / 100 * $platformFeePercent;
+                    $order->vendor_subtotal = $order->total_price - $order->online_payment_commision - $order->website_commision;
 
                     $order->save();
+                    Mail::to($order->vendorUser)->send(new NewOrderMail($order));
                 }
+                Mail::to($orders[0]->user)->send(new CheckOutCompleted($orders));
             // no break → falls through intentionally?
 
             case 'checkout.session.completed':
@@ -109,7 +127,7 @@ class StripeController extends Controller
                         if ($options) {
                             sort($options);
                             $variation = $product->variation()
-                                ->where('variation_tyoe_option_ids', $options)
+                                ->where('variation_type_option_ids', $options)
                                 ->first();
 
                             if ($variation && $variation->quantity !== null) {

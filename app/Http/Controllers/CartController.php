@@ -51,7 +51,7 @@ class CartController extends Controller
             'quantity' => ['required', 'integer', 'min:1'],
         ]);
         $cartService->addItemToCart($product, $data['quantity'], $data['option_ids'] ?: []);
-        return back()->with('Success', 'Product added to Cart Successfully');
+        return back()->with('success', 'Product added to Cart Successfully');
 
     }
 
@@ -69,7 +69,7 @@ class CartController extends Controller
         $quantity = $request->input('quantity');
         $cartService->updateItemQuantity($product->id, $quantity, $optionIds);
 
-        return back()->with('Success', 'Cart Updated Successfully');
+        return back()->with('success', 'Cart Updated Successfully');
 
     }
 
@@ -82,7 +82,7 @@ class CartController extends Controller
         $optionIds = $request->input('option_ids') ?: [];
 
         $cartService->removeItemFromCart($product->id, $optionIds);
-        return back()->with('Success', 'Product Remobved Successfully');
+        return back()->with('success', 'Product Removed Successfully');
     }
     public function checkout(Request $request, CartService $cartService)
     {

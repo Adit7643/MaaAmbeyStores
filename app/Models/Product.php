@@ -55,12 +55,17 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Category::class);
     }
 
+    public function variations(): HasMany
+    {
+        return $this->hasMany(ProductVariation::class, 'product_id');
+    }
+
     public function variationTypes(): HasMany
     {
         return $this->hasMany(VariationType::class);
     }
 
-    public function variations(): HasMany
+    public function variation(): HasMany
     {
         return $this->hasMany(ProductVariation::class, 'product_id');
     }
@@ -76,4 +81,22 @@ class Product extends Model implements HasMedia
             }
         }
     }
+
+    public function getImageForOptions(array $optionIds = null)
+    {
+        if ($optionIds) {
+            $optionIds = array_values($optionIds);
+            sort($optionIds);
+            $options = VariationTypeOption::whereIn('id', $optionIds)->get();
+
+            foreach ($options as $option) {
+                $image = $option->getFirstMediaUrl('images', 'small');
+                if ($image) {
+                    return $image;
+                }
+            }
+        }
+        return $this->getFirstMediaUrl('images', 'small');
+    }
+
 }

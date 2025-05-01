@@ -38,14 +38,15 @@ function MiniCartDropdown() {
                                 <Link href={productRoute(item)}>
                                 {item.title}
                             </Link>
-                            <div className="flex justify-between text-sm">
-                            <div>
-                                Quantity: {item.quantity}
-                            </div>
-                            <div>
-                            <CurrencyFormatter amount={item.quantity*item.price} />
-                            </div>
-                            </div>
+                            <div className="flex justify-between w-[300px] text-sm">
+                             <div>
+                                 Quantity: {item.quantity}
+                             </div>
+                             <div>
+                                 <CurrencyFormatter amount={item.quantity * item.price} />
+                             </div>
+                             </div>
+
                             </h3>
                             </div>
                         </div>
