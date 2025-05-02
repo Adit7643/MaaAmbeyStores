@@ -64,7 +64,7 @@ export type cartItem ={
     quantity:number;
     image:string;
     option_ids: Record<string, number>;
-    options: VariationType[]
+    options: VariationTypeOption[]
 }
 
 export type GroupedCartItems = {
